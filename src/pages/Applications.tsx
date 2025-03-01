@@ -13,26 +13,21 @@ const Applications: React.FC = () => {
     const [activeTab, setActiveTab] = useState<string>('All');
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   
-    const handleAddJobPosting = useCallback(() => {
-      // TODO: Logic to add a new job posting needs to be moved to Applications component
-      // TODO: Logic also needs to update backend and fetch new data
-      // For demonstration, we'll just add a new job application
-      const newApplication: JobApplication = { 
-          company: 'New Company',
-          position: 'New Position',
-          dateApplied: new Date().toLocaleDateString(),
-          status: 'Applied'
-       };
+    // const handleAddNewJobEntry = useCallback(() => {
+    //   // TODO: Logic to add a new job posting needs to be moved to Applications component
+    //   // TODO: Logic also needs to update backend and fetch new data
+    //   // For demonstration, we'll just add a new job application
+    //   // const newApplication: JobApplication = { 
+    //   //     company: 'New Company',
+    //   //     position: 'New Position',
+    //   //     dateApplied: new Date().toLocaleDateString(),
+    //   //     status: 'Applied'
+    //   //  };
   
   
-          setJobApplications([...jobApplications, newApplication]);
-          setIsModalOpen(false);
-          console.log('New job added:', newApplication);
-      }, [jobApplications]);
-  
-    
-  
-    
+    //       setJobApplications([...jobApplications, newApplication]);
+    //       console.log('New job added:', newApplication);
+    //   }, [jobApplications]);
     
     const tabs = ['All', 'Applied', 'Interview', 'Offer', 'Rejected'];
     
@@ -61,15 +56,18 @@ const Applications: React.FC = () => {
 
   return (
     <div className="flex-1 overflow-auto relative z-10">
-        <Header title="Applications" actions="New Application" actionFunction={() => setIsModalOpen(true)} />
+        <Header title="Applications" />
 
         <main className='max-7xl mx-auto py-6 px-4 lg:px-8'>
             <div className="card max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
-            <div className="card-header flex justify-between items-center p-6 border-b border-gray-100">
+            <div className="card-header flex justify-end items-center p-6 border-b border-gray-100">
               {/* <div className="card-title text-xl font-semibold text-gray-800">All Applications</div> */}
-              <a href="#" className="btn btn-secondary px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors">
-                View All
-              </a>
+              <button 
+                className="btn btn-secondary px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors"
+                onClick={() => setIsModalOpen(true)}
+              >
+                Add New
+              </button>
             </div>
             
             <div className="tabs flex border-b border-gray-100">
@@ -132,7 +130,7 @@ const Applications: React.FC = () => {
         <NewApplicationModal
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
-            onConfirm={handleAddJobPosting}
+            onConfirm={setJobApplications([...jobApplications, newApplication]}
         />  
     </div>
   )

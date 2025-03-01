@@ -86,13 +86,13 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="flex-1 overflow-auto relative z-10">
-        <Header title="Dashboard" actions="Add Job Posting" actionFunction={() => setIsModalOpen(true)} />
+        <Header title="Dashboard" />
 
         <main className='max-7xl mx-auto py-6 px-4 lg:px-8'>
             <div className="card max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
             <div className="card-header flex justify-between items-center p-6 border-b border-gray-100">
               <div className="card-title text-xl font-semibold text-gray-800">Recent Applications</div>
-              <a href="#" className="btn btn-secondary px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors">
+              <a href="/applications" className="btn btn-secondary px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors">
                 View All
               </a>
             </div>
