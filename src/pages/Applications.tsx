@@ -8,8 +8,6 @@ import dummyApplications from '../data/dummyApplications';
 
 const testApplications = dummyApplications;
 
-
-
 const Applications: React.FC = () => {
     const [jobApplications, setJobApplications] = useState<JobApplication[]>(testApplications);
     const [activeTab, setActiveTab] = useState<string>('All');
@@ -52,6 +50,10 @@ const Applications: React.FC = () => {
           return 'bg-green-100 text-green-800';
         case 'Rejected':
           return 'bg-red-100 text-red-800';
+        case 'Phone Screen':
+          return 'bg-yellow-100 text-yellow-800';
+        case 'Final Round':
+          return 'bg-indigo-100 text-indigo-800';
         default:
           return 'bg-gray-100 text-gray-800';
       }
