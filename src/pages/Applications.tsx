@@ -3,39 +3,12 @@ import React, { useState, useCallback } from 'react'
 import Header from '../components/common/Header'
 import NewApplicationModal from '../components/common/modals/NewApplicationModal';
 
-const testApplications: JobApplication[] = [
-  {
-    company: 'TechCorp Inc.',
-    position: 'Senior Web Developer',
-    dateApplied: 'Feb 20, 2025',
-    status: 'Interview'
-  },
-  {
-    company: 'Global Solutions',
-    position: 'UX Designer',
-    dateApplied: 'Feb 18, 2025',
-    status: 'Applied'
-  },
-  {
-    company: 'InnovateTech',
-    position: 'Product Manager',
-    dateApplied: 'Feb 15, 2025',
-    status: 'Rejected'
-  },
-  {
-    company: 'FutureWorks',
-    position: 'Full Stack Developer',
-    dateApplied: 'Feb 10, 2025',
-    status: 'Offer'
-  }
-];
+import { JobApplication } from '../types/applicationInfo';
+import dummyApplications from '../data/dummyApplications';
 
-interface JobApplication {
-  company: string;
-  position: string;
-  dateApplied: string;
-  status: 'Applied' | 'Interview' | 'Offer' | 'Rejected';
-}
+const testApplications = dummyApplications;
+
+
 
 const Applications: React.FC = () => {
     const [jobApplications, setJobApplications] = useState<JobApplication[]>(testApplications);
