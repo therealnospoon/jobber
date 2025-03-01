@@ -3,4 +3,14 @@ export interface JobApplication {
   position: string;
   dateApplied: string;
   status: 'Applied' | 'Interview' | 'Offer' | 'Rejected' | 'Phone Screen' | 'Final Round';
+  notes: string;
+}
+
+export enum JobStatus {
+  Applied = "Applied",
+  Interview = "Interview",
+  Offer = "Offer",
+  Rejected = "Rejected",
+  PhoneScreen = "Phone Screen",
+  FinalRound = "Final Round",
 }

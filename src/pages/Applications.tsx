@@ -3,7 +3,10 @@ import React, { useState, useCallback } from 'react'
 import Header from '../components/common/Header'
 import NewApplicationModal from '../components/common/modals/NewApplicationModal';
 
-import { JobApplication } from '../types/applicationInfo';
+//Applications types & enums
+import { JobApplication, JobStatus } from '../types/applicationInfo';
+
+//dummy data
 import dummyApplications from '../data/dummyApplications';
 
 const testApplications = dummyApplications;
@@ -13,21 +16,21 @@ const Applications: React.FC = () => {
     const [activeTab, setActiveTab] = useState<string>('All');
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   
-    // const handleAddNewJobEntry = useCallback(() => {
-    //   // TODO: Logic to add a new job posting needs to be moved to Applications component
-    //   // TODO: Logic also needs to update backend and fetch new data
-    //   // For demonstration, we'll just add a new job application
-    //   // const newApplication: JobApplication = { 
-    //   //     company: 'New Company',
-    //   //     position: 'New Position',
-    //   //     dateApplied: new Date().toLocaleDateString(),
-    //   //     status: 'Applied'
-    //   //  };
+    const handleAddNewJobEntry = useCallback((company: string, position: string, dateApplied: string, status: JobStatus, notes: string) => {
+      // TODO: Logic to add a new job posting needs to be moved to Applications component
+      // TODO: Logic also needs to update backend and fetch new data
+      // For demonstration, we'll just add a new job application
+      const newApplication: JobApplication = { 
+          company: company,
+          position: position,
+          dateApplied: dateApplied,
+          status: status,
+          notes: notes
+       };
   
-  
-    //       setJobApplications([...jobApplications, newApplication]);
-    //       console.log('New job added:', newApplication);
-    //   }, [jobApplications]);
+          setJobApplications([...jobApplications, newApplication]);
+          console.log('New job added:', newApplication);
+      }, [jobApplications]);
     
     const tabs = ['All', 'Applied', 'Interview', 'Offer', 'Rejected'];
     
@@ -94,6 +97,7 @@ const Applications: React.FC = () => {
                     <th className="px-6 py-3">Position</th>
                     <th className="px-6 py-3">Date Applied</th>
                     <th className="px-6 py-3">Status</th>
+                    <th className="px-6 py-3">Notes</th>
                     <th className="px-6 py-3">Actions</th>
                   </tr>
                 </thead>
@@ -114,6 +118,11 @@ const Applications: React.FC = () => {
                           {job.status}
                         </span>
                       </td>
+                      <td className="px-6 py-4">
+                        <span className="text-gray-700">
+                          {job.notes}
+                        </span>
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <button className="btn px-3 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-md text-sm transition-colors">
                           Details
@@ -130,7 +139,7 @@ const Applications: React.FC = () => {
         <NewApplicationModal
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
-            onConfirm={setJobApplications([...jobApplications, newApplication]}
+            onConfirm={handleAddNewJobEntry}
         />  
     </div>
   )

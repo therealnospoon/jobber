@@ -2,21 +2,21 @@ import React, { useState } from 'react'
 
 import Modal from './Modal';
 
-import { JobApplication } from '../../../types/applicationInfo';
+import { JobStatus } from '../../../types/applicationInfo';
 interface NewApplicationModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (newApplication: JobApplication) => { company: string, position: string, status: string, dateApplied: string };
+  onConfirm: (company: string, position: string, dateApplied: string, status: JobStatus, notes:string) => void;
 }
 
-enum JobStatus {
-    Applied = "Applied",
-    Interview = "Interview",
-    Offer = "Offer",
-    Rejected = "Rejected",
-    PhoneScreen = "Phone Screen",
-    FinalRound = "Final Round",
-}
+// enum JobStatus {
+//     Applied = "Applied",
+//     Interview = "Interview",
+//     Offer = "Offer",
+//     Rejected = "Rejected",
+//     PhoneScreen = "Phone Screen",
+//     FinalRound = "Final Round",
+// }
 
 const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClose, onConfirm }) => {
 
@@ -160,7 +160,7 @@ const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClo
                     <div className="flex justify-end mt-6">
                         <button className="px-6 py-2 leading-5 text-white transition-colors duration-200 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600"
                             onClick={() => {
-                                onConfirm({ company, position, status, dateApplied }); 
+                                onConfirm(company, position, dateApplied, status, notes); 
                                 onClose();}}
                         >
                             Save New Application
