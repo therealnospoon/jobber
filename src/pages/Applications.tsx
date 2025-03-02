@@ -61,8 +61,8 @@ const Applications: React.FC = () => {
     <div className="flex-1 overflow-auto relative z-10">
         <Header title="Applications" />
 
-        <main className='max-7xl mx-auto py-6 px-4 lg:px-8'>
-            <div className="card max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+        <main className='max-w-7xl mx-auto py-6 px-4 lg:px-8'>
+            <div className="card mx-auto bg-white rounded-xl shadow-md overflow-hidden">
             <div className="card-header flex justify-end items-center p-6 border-b border-gray-100">
               {/* <div className="card-title text-xl font-semibold text-gray-800">All Applications</div> */}
               <button 
