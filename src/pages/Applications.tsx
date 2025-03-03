@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 
 import Header from '../components/common/Header'
 import NewApplicationModal from '../components/common/modals/NewApplicationModal';
@@ -6,22 +6,31 @@ import NewApplicationModal from '../components/common/modals/NewApplicationModal
 //Applications types & enums
 import { JobApplication, JobStatus } from '../types/applicationInfo';
 
-//Utils
-import { convertDatesToISO } from '../utils/utils';
+//Services
+import { fetchApplications } from '../services/application-services';
 
 //dummy data
-import dummyApplications from '../data/dummyApplications';
+// import dummyApplications from '../data/dummyApplications';
 
-console.log(convertDatesToISO(dummyApplications));
+// console.log(convertDatesToISO(dummyApplications));
 
-const testApplications = dummyApplications;
+let dbApplications: JobApplication[] = [];
 
 const Applications: React.FC = () => {
-    const [jobApplications, setJobApplications] = useState<JobApplication[]>(testApplications);
+    const [jobApplications, setJobApplications] = useState<JobApplication[]>(dbApplications);
     const [activeTab, setActiveTab] = useState<string>('All');
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    
+    useEffect(() => {
+      fetchApplications()
+        .then((applications: JobApplication[]) => {
+          dbApplications = [...applications];
+          setJobApplications([...applications]);
+        });
+    }, []);
+
   
-    const handleAddNewJobEntry = useCallback((company: string, position: string, dateApplied: string, status: JobStatus, notes: string) => {
+    const handleAddNewJobEntry = useCallback((company: string, position: string, dateApplied: string, status: JobStatus, notes: string, url: string) => {
       // TODO: Logic to add a new job posting needs to be moved to Applications component
       // TODO: Logic also needs to update backend and fetch new data
       // For demonstration, we'll just add a new job application
@@ -30,7 +39,8 @@ const Applications: React.FC = () => {
           position: position,
           dateApplied: dateApplied,
           status: status,
-          notes: notes
+          notes: notes,
+          url: url
        };
   
           setJobApplications([...jobApplications, newApplication]);
