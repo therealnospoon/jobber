@@ -6,8 +6,13 @@ import NewApplicationModal from '../components/common/modals/NewApplicationModal
 //Applications types & enums
 import { JobApplication, JobStatus } from '../types/applicationInfo';
 
+//Utils
+import { convertDatesToISO } from '../utils/utils';
+
 //dummy data
 import dummyApplications from '../data/dummyApplications';
+
+console.log(convertDatesToISO(dummyApplications));
 
 const testApplications = dummyApplications;
 

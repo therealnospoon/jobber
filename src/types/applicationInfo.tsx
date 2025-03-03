@@ -4,6 +4,7 @@ export interface JobApplication {
   dateApplied: string;
   status: 'Applied' | 'Interview' | 'Offer' | 'Rejected' | 'Phone Screen' | 'Final Round';
   notes: string;
+  url: string;
 }
 
 export enum JobStatus {
