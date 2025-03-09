@@ -3,13 +3,13 @@ import React, { useState, useCallback, useEffect } from 'react'
 
 //Components
 import Header from '../components/common/Header'
-import NewApplicationModal from '../components/common/modals/NewApplicationModal';
+import ApplicationModal from '../components/common/modals/ApplicationModal';
 
 //Applications types & enums
-import { JobApplication, JobStatus } from '../types/applicationInfo';
+import { JobApplication, JobApplicationUpdate, JobStatus } from '../types/applicationInfo';
 
 //Services
-import { fetchApplications, addNewApplication } from '../services/application-services';
+import { fetchApplications, addNewApplication, updateApplication } from '../services/application-services';
 import { Link } from 'react-router-dom';
 
 //Icons
@@ -21,14 +21,7 @@ const Applications: React.FC = () => {
     const [jobApplications, setJobApplications] = useState<JobApplication[]>(dbApplications);
     const [activeTab, setActiveTab] = useState<string>('All');
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-    const [selectedApplication, setSelectedApplication] = useState<JobApplication>({ 
-      company: '', 
-      position: '', 
-      dateApplied: '', 
-      status: JobStatus.Applied, 
-      notes: '', 
-      url: '' 
-    });
+    const [selectedApplication, setSelectedApplication] = useState<JobApplication|null>(null);
     
     useEffect(() => {
       fetchApplications()
@@ -39,8 +32,9 @@ const Applications: React.FC = () => {
     }, []);
 
   
-    const handleAddNewJobEntry = useCallback((company: string, position: string, dateApplied: string, status: JobStatus, notes: string, url: string) => {
-      const newApplication: JobApplication = { 
+    const handleAddNewJobEntry = useCallback((_id: string, company: string, position: string, dateApplied: string, status: JobStatus, notes: string, url: string) => {
+      const newApplication: JobApplication = {
+          _id: _id,
           company: company,
           position: position,
           dateApplied: dateApplied,
@@ -59,16 +53,30 @@ const Applications: React.FC = () => {
           console.log('New job added:', newApplication);
     }, [jobApplications]);
 
+    const handleUpdateApplication = useCallback((_id: string, company: string, position: string, dateApplied: string, status: JobStatus, notes: string, url: string) => {
+      const applicationToUpdate: JobApplicationUpdate = { 
+          _id: _id,
+          company: company,
+          position: position,
+          dateApplied: dateApplied,
+          status: status,
+          notes: notes,
+          url: url
+       };
+
+       try {
+          updateApplication(applicationToUpdate);
+          setJobApplications([...jobApplications, { _id: _id, company: company, position: position, dateApplied: dateApplied, status: status, notes: notes, url: url }]);
+          console.log('Job application updated:', applicationToUpdate);
+        } catch (error) {
+          console.error('Failed to add new application:', error);
+       }       
+         
+    }, [jobApplications]);
+
     const handleCloseModal = () => {
       setIsModalOpen(false);
-      setSelectedApplication({ 
-        company: '', 
-        position: '', 
-        dateApplied: '', 
-        status: JobStatus.Applied, 
-        notes: '', 
-        url: '' 
-      });
+      setSelectedApplication(null);
     }
     
     const tabs = ['All', 'Applied', 'Interview', 'Offer', 'Rejected'];
@@ -159,12 +167,12 @@ const Applications: React.FC = () => {
                             {job.status}
                           </span>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-6 py-4 truncate max-w-52">
                           <Link to={job.url} className="text-gray-700">
                             {job.url}
                           </Link>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-6 py-4 whitespace-pre-wrap md:whitespace-nowrap">
                           <span className="text-gray-700">
                             {job.notes}
                           </span>
@@ -188,10 +196,10 @@ const Applications: React.FC = () => {
           </div>
         </main>
 
-        <NewApplicationModal
+        <ApplicationModal
             isOpen={isModalOpen}
             onClose={() => handleCloseModal()}
-            onConfirm={handleAddNewJobEntry}
+            onConfirm={selectedApplication ? handleUpdateApplication : handleAddNewJobEntry}
             existingApplication={selectedApplication}
         />  
     </div>

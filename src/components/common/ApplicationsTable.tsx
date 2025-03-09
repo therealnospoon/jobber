@@ -1,7 +1,7 @@
 // import React, { useState, useCallback, useEffect } from 'react'
 
 // import Header from '../components/common/Header'
-// import NewApplicationModal from '../components/common/modals/NewApplicationModal';
+// import ApplicationModal from '../components/common/modals/ApplicationModal';
 
 // //Applications types & enums
 // import { JobApplication, JobStatus } from '../types/applicationInfo';
@@ -159,7 +159,7 @@
 //           </div>
 //         </main>
 
-//         <NewApplicationModal
+//         <ApplicationModal
 //             isOpen={isModalOpen}
 //             onClose={() => setIsModalOpen(false)}
 //             onConfirm={handleAddNewJobEntry}

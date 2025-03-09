@@ -3,15 +3,17 @@ import React, { useEffect, useState } from 'react'
 import Modal from './Modal';
 
 import { JobApplication, JobStatus } from '../../../types/applicationInfo';
-interface NewApplicationModalProps {
+interface ApplicationModalProps {
   isOpen: boolean;
   existingApplication?: JobApplication | null;
   onClose: () => void;
-  onConfirm: (company: string, position: string, dateApplied: string, status: JobStatus, notes: string, url: string) => void;
+//   onConfirm: (application: JobApplication) => void;
+  onConfirm: (_id: string, company: string, position: string, dateApplied: string, status: JobStatus, notes: string, url: string) => void;
 }
 
-const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClose, onConfirm, existingApplication }) => {
+const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, onConfirm, existingApplication }) => {
     const currentDate = new Date().toLocaleDateString("en-CA");
+    const [_id, setId] = useState("");
     const [company, setCompany] = useState("");
     const [position, setPosition] = useState("");
     const [status, setStatus] = useState(JobStatus.Applied);
@@ -19,9 +21,9 @@ const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClo
     const [notes, setNotes] = useState("");
     const [url, setUrl] = useState("");
 
-    console.log(company, position, status, dateApplied, notes, url);
     useEffect(() => {
         if (existingApplication) {
+            setId(existingApplication._id);
             setCompany(existingApplication.company);
             setPosition(existingApplication.position);
             setStatus(JobStatus[existingApplication.status as keyof typeof JobStatus]);
@@ -61,6 +63,7 @@ const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClo
     }
 
     const resetModalData = () => {
+        setId("");
         setCompany("");
         setPosition("");
         setStatus(JobStatus.Applied);
@@ -180,11 +183,11 @@ const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClo
                     <div className="flex justify-end mt-6">
                         <button className="px-6 py-2 leading-5 text-white transition-colors duration-200 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600"
                             onClick={() => {
-                                onConfirm(company, position, dateApplied, status, notes, url); 
+                                onConfirm(_id, company, position, dateApplied, status, notes, url); 
                                 onClose();
                                 resetModalData();}}
                         >
-                            Save New Application
+                            {existingApplication ? "Update" : "Save New"}
                         </button>
                     </div>
                 </form>
@@ -193,4 +196,4 @@ const NewApplicationModal: React.FC<NewApplicationModalProps> = ({ isOpen, onClo
     )
 }
 
-export default NewApplicationModal
+export default ApplicationModal
