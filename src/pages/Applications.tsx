@@ -1,15 +1,17 @@
 //Packages
 import React, { useState, useCallback, useEffect } from 'react'
+import { motion } from 'framer-motion';
 
 //Components
 import Header from '../components/common/Header'
 import ApplicationModal from '../components/common/modals/ApplicationModal';
+import ConfirmationModal from '../components/common/modals/ConfirmationModal';
 
 //Applications types & enums
-import { JobApplication, JobApplicationUpdate, JobStatus } from '../types/applicationInfo';
+import { JobApplication, JobApplicationUpdate } from '../types/applicationInfo';
 
 //Services
-import { fetchApplications, addNewApplication, updateApplication } from '../services/application-services';
+import { fetchApplications, addNewApplication, updateApplication, deleteApplication } from '../services/application-services';
 import { Link } from 'react-router-dom';
 
 //Icons
@@ -21,6 +23,7 @@ const Applications: React.FC = () => {
     const [jobApplications, setJobApplications] = useState<JobApplication[]>(dbApplications);
     const [activeTab, setActiveTab] = useState<string>('All');
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState<boolean>(false);
     const [selectedApplication, setSelectedApplication] = useState<JobApplication|null>(null);
     
     useEffect(() => {
@@ -32,15 +35,15 @@ const Applications: React.FC = () => {
     }, []);
 
   
-    const handleAddNewJobEntry = useCallback((_id: string, company: string, position: string, dateApplied: string, status: JobStatus, notes: string, url: string) => {
+    const handleAddNewJobEntry = useCallback((application:JobApplication) => {
       const newApplication: JobApplication = {
-          _id: _id,
-          company: company,
-          position: position,
-          dateApplied: dateApplied,
-          status: status,
-          notes: notes,
-          url: url
+          _id: application._id,
+          company: application.company,
+          position: application.position,
+          dateApplied: application.dateApplied,
+          status: application.status,
+          notes: application.notes,
+          url: application.url
        };
 
        try {
@@ -53,26 +56,42 @@ const Applications: React.FC = () => {
           console.log('New job added:', newApplication);
     }, [jobApplications]);
 
-    const handleUpdateApplication = useCallback((_id: string, company: string, position: string, dateApplied: string, status: JobStatus, notes: string, url: string) => {
+    const handleUpdateApplication = useCallback((application:JobApplication) => {
       const applicationToUpdate: JobApplicationUpdate = { 
-          _id: _id,
-          company: company,
-          position: position,
-          dateApplied: dateApplied,
-          status: status,
-          notes: notes,
-          url: url
+        _id: application._id,
+        company: application.company,
+        position: application.position,
+        dateApplied: application.dateApplied,
+        status: application.status,
+        notes: application.notes,
+        url: application.url
        };
 
        try {
           updateApplication(applicationToUpdate);
-          setJobApplications([...jobApplications, { _id: _id, company: company, position: position, dateApplied: dateApplied, status: status, notes: notes, url: url }]);
+          setJobApplications([...jobApplications, { _id: application._id,
+            company: application.company,
+            position: application.position,
+            dateApplied: application.dateApplied,
+            status: application.status,
+            notes: application.notes,
+            url: application.url }]);
           console.log('Job application updated:', applicationToUpdate);
         } catch (error) {
           console.error('Failed to add new application:', error);
        }       
          
     }, [jobApplications]);
+
+    const handleDeleteApplication = (applicationID: string) => {
+        try {
+          deleteApplication(applicationID);
+          setJobApplications(jobApplications.filter(application => application._id !== applicationID));
+          console.log(`Job application with ID: ${applicationID} deleted`);
+        } catch (error) {
+          console.error('Failed to add new application:', error);
+        }          
+    };
 
     const handleCloseModal = () => {
       setIsModalOpen(false);
@@ -109,6 +128,11 @@ const Applications: React.FC = () => {
         <Header title="Applications" />
 
         <main className='max-w-7xl mx-auto py-6 px-4 lg:px-8'>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
 
           <div className="card mx-auto bg-white rounded-xl shadow-md overflow-hidden">
               <div className="card-header flex justify-end items-center p-6 border-b border-gray-100">
@@ -184,7 +208,10 @@ const Applications: React.FC = () => {
                           >
                             <Edit size={20} style={{ color: 'purple', minWidth: "20px"}} />
                           </button>
-                          <button className="btn px-3 py-1 hover:bg-zinc-100 rounded-md text-sm transition-colors">
+                          <button 
+                            className="btn px-3 py-1 hover:bg-zinc-100 rounded-md text-sm transition-colors"
+                            onClick={() => {setSelectedApplication(job); setIsConfirmationModalOpen(true)}}
+                          >
                             <Trash size={20} style={{ color: 'red', minWidth: "10px"}} />
                           </button>
                         </td>
@@ -194,6 +221,7 @@ const Applications: React.FC = () => {
                 </table>
               </div>
           </div>
+        </motion.div>
         </main>
 
         <ApplicationModal
@@ -201,6 +229,19 @@ const Applications: React.FC = () => {
             onClose={() => handleCloseModal()}
             onConfirm={selectedApplication ? handleUpdateApplication : handleAddNewJobEntry}
             existingApplication={selectedApplication}
+        />
+
+        <ConfirmationModal
+            isOpen={isConfirmationModalOpen}
+            onClose={() => { 
+              setIsConfirmationModalOpen(false);
+              setSelectedApplication(null);
+            }}
+            onConfirm={() => {
+              handleDeleteApplication(selectedApplication!._id);
+              setIsConfirmationModalOpen(false);
+              setSelectedApplication(null);
+            }}
         />  
     </div>
   )

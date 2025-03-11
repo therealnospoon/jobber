@@ -35,3 +35,12 @@ export const updateApplication = async (existingApplication: JobApplicationUpdat
 
   return response.data;
 }
+
+export const deleteApplication = async (applicationID: string) => {
+  const response = await axios.delete(`${API_BASE_URL}/job_application_entries/${applicationID}`);
+  if (response.status !== 204) {
+    throw new Error('Failed to delete application');
+  } else {
+    console.log(`Deleted application id:${applicationID}`);
+  }
+}

@@ -11,11 +11,8 @@ const ConfirmationModal: React.FC<confirmationModalProps> = ({ isOpen, onClose, 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <h2 className="text-lg font-bold"> 
-                Confirm Action
-                </h2>
-            <p className="text-gray-700">
-                Are you sure you want to proceed?
-                </p>
+                Are you sure you want to delete this application?
+            </h2>
             <div className="flex justify-end
                             space-x-4 mt-4">
                 <button

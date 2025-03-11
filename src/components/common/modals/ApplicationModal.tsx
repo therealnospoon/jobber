@@ -7,8 +7,8 @@ interface ApplicationModalProps {
   isOpen: boolean;
   existingApplication?: JobApplication | null;
   onClose: () => void;
-//   onConfirm: (application: JobApplication) => void;
-  onConfirm: (_id: string, company: string, position: string, dateApplied: string, status: JobStatus, notes: string, url: string) => void;
+  onConfirm: (application: JobApplication) => void;
+//   onConfirm: (_id: string, company: string, position: string, dateApplied: string, status: JobStatus, notes: string, url: string) => void;
 }
 
 const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, onConfirm, existingApplication }) => {
@@ -27,10 +27,12 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, on
             setCompany(existingApplication.company);
             setPosition(existingApplication.position);
             setStatus(JobStatus[existingApplication.status as keyof typeof JobStatus]);
-            setDateApplied(existingApplication.dateApplied);
+            setDateApplied(existingApplication.dateApplied.split('T')[0]);
             setNotes(existingApplication.notes);
             setUrl(existingApplication.url);
         }
+
+        console.log("existingApplication", existingApplication);
     }, [existingApplication]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -145,6 +147,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, on
 
                             </textarea>
                         </div>
+                        // TODO: Add resume upload functionality
                         {/* <div>
                             <label className="block text-sm font-medium ">
                                 Image
@@ -183,7 +186,14 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, on
                     <div className="flex justify-end mt-6">
                         <button className="px-6 py-2 leading-5 text-white transition-colors duration-200 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600"
                             onClick={() => {
-                                onConfirm(_id, company, position, dateApplied, status, notes, url); 
+                                onConfirm({
+                                    _id: _id,
+                                    company: company,
+                                    position: position,
+                                    dateApplied: dateApplied,
+                                    status: status,
+                                    notes: notes,
+                                    url: url}); 
                                 onClose();
                                 resetModalData();}}
                         >
