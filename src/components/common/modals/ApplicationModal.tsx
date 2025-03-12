@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 
 import Modal from './Modal';
 
-import { JobApplication, JobStatus } from '../../../types/applicationInfo';
+import { JobApplication } from '../../../types/applicationInfo';
 interface ApplicationModalProps {
   isOpen: boolean;
   existingApplication?: JobApplication | null;
@@ -11,22 +11,31 @@ interface ApplicationModalProps {
 //   onConfirm: (_id: string, company: string, position: string, dateApplied: string, status: JobStatus, notes: string, url: string) => void;
 }
 
+const jobStatuses = [
+  "Applied",
+    "Interview",
+    "Offer",
+    "Rejected",
+    "Phone Screen",
+    "Final Round"
+];
+
 const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, onConfirm, existingApplication }) => {
     const currentDate = new Date().toLocaleDateString("en-CA");
     const [_id, setId] = useState("");
     const [company, setCompany] = useState("");
     const [position, setPosition] = useState("");
-    const [status, setStatus] = useState(JobStatus.Applied);
+    const [status, setStatus] = useState("Applied");
     const [dateApplied, setDateApplied] = useState(currentDate);
     const [notes, setNotes] = useState("");
     const [url, setUrl] = useState("");
 
     useEffect(() => {
         if (existingApplication) {
-            setId(existingApplication._id);
+            setId(existingApplication._id || "");
             setCompany(existingApplication.company);
             setPosition(existingApplication.position);
-            setStatus(JobStatus[existingApplication.status as keyof typeof JobStatus]);
+            setStatus(existingApplication.status);
             setDateApplied(existingApplication.dateApplied.split('T')[0]);
             setNotes(existingApplication.notes);
             setUrl(existingApplication.url);
@@ -54,10 +63,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, on
                 setUrl(value);
                 break;
             case 'status':
-                if (Object.values(JobStatus).includes(value as JobStatus)) {
-                    setStatus(value as JobStatus);
-                    return;
-                }
+                setStatus(value);
                 break;
             default:
                 break;
@@ -68,7 +74,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, on
         setId("");
         setCompany("");
         setPosition("");
-        setStatus(JobStatus.Applied);
+        setStatus("Applied");
         setDateApplied((new Date()).toISOString());
         setNotes("");
         setUrl("");
@@ -115,12 +121,9 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, on
                                 onChange={handleInputChange}
                                 name="status"
                             >
-                                <option>Applied</option>
-                                <option>Interview</option>
-                                <option>Offer</option>
-                                <option>Rejected</option>
-                                <option>Phone Screen</option>
-                                <option>Final Round</option>
+                                { jobStatuses.map((status, idx) => {
+                                    return <option key={idx}>{status}</option>
+                                })}
                             </select>
                         </div>
                         <div>
@@ -191,7 +194,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, on
                                     company: company,
                                     position: position,
                                     dateApplied: dateApplied,
-                                    status: status,
+                                    status: status as 'Applied' | 'Interview' | 'Offer' | 'Rejected' | 'Phone Screen' | 'Final Round',
                                     notes: notes,
                                     url: url}); 
                                 onClose();

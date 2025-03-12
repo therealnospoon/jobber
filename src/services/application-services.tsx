@@ -1,5 +1,5 @@
 import axios from "axios";
-import { JobApplication, JobApplicationUpdate } from "../types/applicationInfo";
+import { JobApplication } from "../types/applicationInfo";
 
 const API_BASE_URL = "http://localhost:8000";
 
@@ -25,7 +25,7 @@ export const addNewApplication = async (newApplication: JobApplication) => {
   return response.data;
 }
 
-export const updateApplication = async (existingApplication: JobApplicationUpdate) => {
+export const updateApplication = async (existingApplication: JobApplication) => {
   const response = await axios.put(`${API_BASE_URL}/job_application_entries/${existingApplication._id}`, existingApplication);
   if (response.status !== 200) {
     throw new Error('Failed to update application');
@@ -36,7 +36,7 @@ export const updateApplication = async (existingApplication: JobApplicationUpdat
   return response.data;
 }
 
-export const deleteApplication = async (applicationID: string) => {
+export const deleteApplication = async (applicationID: string | undefined) => {
   const response = await axios.delete(`${API_BASE_URL}/job_application_entries/${applicationID}`);
   if (response.status !== 204) {
     throw new Error('Failed to delete application');

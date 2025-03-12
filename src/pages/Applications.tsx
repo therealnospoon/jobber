@@ -8,7 +8,7 @@ import ApplicationModal from '../components/common/modals/ApplicationModal';
 import ConfirmationModal from '../components/common/modals/ConfirmationModal';
 
 //Applications types & enums
-import { JobApplication, JobApplicationUpdate } from '../types/applicationInfo';
+import { JobApplication } from '../types/applicationInfo';
 
 //Services
 import { fetchApplications, addNewApplication, updateApplication, deleteApplication } from '../services/application-services';
@@ -37,7 +37,6 @@ const Applications: React.FC = () => {
   
     const handleAddNewJobEntry = useCallback((application:JobApplication) => {
       const newApplication: JobApplication = {
-          _id: application._id,
           company: application.company,
           position: application.position,
           dateApplied: application.dateApplied,
@@ -47,17 +46,19 @@ const Applications: React.FC = () => {
        };
 
        try {
-          addNewApplication(newApplication);
+          addNewApplication(newApplication).then((newlyAddedApp) => {
+            setJobApplications([...jobApplications, newlyAddedApp]);
+            console.log('New job added:', newApplication);
+          });
         } catch (error) {
           console.error('Failed to add new application:', error);
        }
   
-          setJobApplications([...jobApplications, newApplication]);
-          console.log('New job added:', newApplication);
+          
     }, [jobApplications]);
 
     const handleUpdateApplication = useCallback((application:JobApplication) => {
-      const applicationToUpdate: JobApplicationUpdate = { 
+      const applicationToUpdate: JobApplication = { 
         _id: application._id,
         company: application.company,
         position: application.position,
@@ -69,13 +70,13 @@ const Applications: React.FC = () => {
 
        try {
           updateApplication(applicationToUpdate);
-          setJobApplications([...jobApplications, { _id: application._id,
-            company: application.company,
-            position: application.position,
-            dateApplied: application.dateApplied,
-            status: application.status,
-            notes: application.notes,
-            url: application.url }]);
+
+          const updatedJobApplications = [...jobApplications];
+
+          const updatedAppIndex = jobApplications.findIndex(app => app._id === applicationToUpdate._id);
+          updatedJobApplications[updatedAppIndex] = applicationToUpdate;
+
+          setJobApplications(updatedJobApplications);
           console.log('Job application updated:', applicationToUpdate);
         } catch (error) {
           console.error('Failed to add new application:', error);
@@ -83,7 +84,7 @@ const Applications: React.FC = () => {
          
     }, [jobApplications]);
 
-    const handleDeleteApplication = (applicationID: string) => {
+    const handleDeleteApplication = (applicationID: string | undefined) => {
         try {
           deleteApplication(applicationID);
           setJobApplications(jobApplications.filter(application => application._id !== applicationID));

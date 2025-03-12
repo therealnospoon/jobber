@@ -1,5 +1,5 @@
 export interface JobApplication {
-  _id: string;
+  _id?: string | undefined;
   company: string;
   position: string;
   dateApplied: string;
@@ -17,11 +17,11 @@ export interface JobApplicationUpdate {
   url: string;
 }
 
-export enum JobStatus {
-  Applied = "Applied",
-  Interview = "Interview",
-  Offer = "Offer",
-  Rejected = "Rejected",
-  PhoneScreen = "Phone Screen",
-  FinalRound = "Final Round",
-}
+// export enum JobStatus {
+//   Applied = "Applied",
+//   Interview = "Interview",
+//   Offer = "Offer",
+//   Rejected = "Rejected",
+//   PhoneScreen = "Phone Screen",
+//   FinalRound = "Final Round",
+// }
