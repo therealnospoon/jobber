@@ -1,5 +1,6 @@
 export interface JobApplication {
   _id?: string | undefined;
+  createdOn?: string | undefined;
   company: string;
   position: string;
   dateApplied: string;

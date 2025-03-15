@@ -4,26 +4,29 @@ import { Zap, Users, ShoppingBag, BarChart2 } from 'lucide-react'
 
 import { JobApplication } from '../types/applicationInfo';
 import { fetchApplications } from '../services/application-services';
+import { getMostRecentApplications } from '../services/application-data-services';
 
 import Header from '../components/common/Header'
 import StatCard from '../components/common/StatCard';
 import SalesOverviewChart from '../components/dashboard/SalesOverviewChart'
 import CategoryDistributionChart from '../components/dashboard/CategoryDistributionChart'
 
-let dbApplications: JobApplication[] = [];
-const top5Applications: JobApplication[] = dbApplications.slice(0, 5);
-
 const Dashboard: React.FC = () => {
-  const [jobApplications, setJobApplications] = useState<JobApplication[]>(top5Applications);
-      const [activeTab, setActiveTab] = useState<string>('All');
+
+  const [jobApplications, setJobApplications] = useState<JobApplication[]>([]);
+  const [activeTab, setActiveTab] = useState<string>('All');
       
-      useEffect(() => {
-        fetchApplications()
-          .then((applications: JobApplication[]) => {
-            dbApplications = [...applications];
-            setJobApplications([...applications]);
-          });
-      }, []);
+  useEffect(() => {
+    getMostRecentApplications().then((mostRecentApplications: JobApplication[]) => {
+      // console.log("Fetched applications: ", mostRecentApplications);
+      console.log("Most recent applications: ", mostRecentApplications);
+      setJobApplications(mostRecentApplications);
+    }
+    ).catch((error) => {
+      console.error("Error fetching applications: ", error);
+    }
+    );
+  }, []);
   
   const tabs = ['All', 'Applied', 'Interview', 'Offer', 'Rejected'];
   
@@ -57,10 +60,10 @@ const Dashboard: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1 }}
           >
-              <StatCard name='Total Sales' icon={Zap} value='$12,345' color='#6366F1' />
-              <StatCard name='New Users' icon={Users} value='1,234' color='#8B5CF6' />
-              <StatCard name='Total Products' icon={ShoppingBag} value='567' color='#EC4899' />
-              <StatCard name='Conversion Rate' icon={BarChart2} value='12.5%' color='#10B981' />
+              <StatCard name='Total jobs applied to' icon={Zap} value={jobApplications.length} color='#6366F1' />
+              <StatCard name='Application rate' icon={Users} value={jobApplications.filter(app => app.status == "Interview").length} color='#8B5CF6' />
+              <StatCard name='Rejection rate' icon={ShoppingBag} value={jobApplications.filter(app => app.status == "Rejected").length} color='#EC4899' />
+              <StatCard name='Conversion rate (Application to offer)' icon={BarChart2} value={jobApplications.filter(app => app.status == "Offer").length} color='#10B981' />
           </motion.div>
 
           {/* CHARTS GO HERE */}
