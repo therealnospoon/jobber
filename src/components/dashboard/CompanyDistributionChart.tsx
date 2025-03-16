@@ -1,7 +1,13 @@
 import { motion } from "framer-motion";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
-const categoryData = [
+//Pie-charts to display here:
+// 1. Names of companies I've applied to
+// 2. Locations of companies I've applied to
+// 3. Sizes of companies I've applied to
+// 4. Different response types from all companies that have responded to my applications + Ghosted
+
+const categoryData = [ 
 	{ name: "Electronics", value: 4500 },
 	{ name: "Clothing", value: 3200 },
 	{ name: "Home & Garden", value: 2800 },
@@ -11,7 +17,7 @@ const categoryData = [
 
 const COLORS = ["#6366F1", "#8B5CF6", "#EC4899", "#10B981", "#F59E0B"];
 
-const CategoryDistributionChart = () => {
+const CompanyDistributionChart = () => {
 	return (
 		<motion.div
 			className='bg-zinc-50 bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl p-6 border border-zinc-100'
@@ -19,7 +25,7 @@ const CategoryDistributionChart = () => {
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ delay: 0.3 }}
 		>
-			<h2 className='text-lg font-medium mb-4 text-gray-600'>Category Distribution</h2>
+			<h2 className='text-lg font-medium mb-4 text-gray-600'>Company attributes</h2>
 			<div className='h-80'>
 				<ResponsiveContainer width={"100%"} height={"100%"}>
 					<PieChart>
@@ -51,4 +57,4 @@ const CategoryDistributionChart = () => {
 		</motion.div>
 	);
 };
-export default CategoryDistributionChart;
+export default CompanyDistributionChart;

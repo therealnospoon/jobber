@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom'
 import Sidebar from './components/Sidebar'
 import Dashboard from './pages/Dashboard'
 import Applications from './pages/Applications'
+import ResumeWorkshop from './pages/ResumeWorkshop'
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/applications" element={<Applications />} />
+        <Route path="/resumeworkshop" element={<ResumeWorkshop />} />
       </Routes>
     </div>
   )

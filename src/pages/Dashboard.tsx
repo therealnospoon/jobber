@@ -9,7 +9,7 @@ import { getMostRecentApplications } from '../services/application-data-services
 import Header from '../components/common/Header'
 import StatCard from '../components/common/StatCard';
 import SalesOverviewChart from '../components/dashboard/SalesOverviewChart'
-import CategoryDistributionChart from '../components/dashboard/CategoryDistributionChart'
+import CompanyDistributionChart from '../components/dashboard/CompanyDistributionChart'
 
 const Dashboard: React.FC = () => {
 
@@ -69,7 +69,7 @@ const Dashboard: React.FC = () => {
           {/* CHARTS GO HERE */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <SalesOverviewChart />
-              <CategoryDistributionChart />
+              <CompanyDistributionChart />
               <div className="card bg-zinc-50 shadow-lg rounded-xl p-6 lg:col-span-2 overflow-hidden">
                 <div className="card-header bg-zinc-50 flex justify-between items-center p-6 border-b border-gray-100">
                   <div className="card-title bg-zinc-50 text-xl font-semibold text-gray-800">Recent Applications</div>

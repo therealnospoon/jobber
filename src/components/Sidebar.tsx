@@ -12,7 +12,7 @@ const SIDEBAR_ITEMS =  [
 		href: "/",
 	},
 	{ name: "Applications", icon: ShoppingBag, color: "#8B5CF6", href: "/applications" },
-	{ name: "Resumes", icon: Users, color: "#EC4899", href: "/resumes" },
+	{ name: "Resume Workshop", icon: Users, color: "#EC4899", href: "/resumeworkshop" },
 	{ name: "Calendar", icon: DollarSign, color: "#10B981", href: "/calendar" },
 	{ name: "Reports", icon: ShoppingCart, color: "#F59E0B", href: "/reports" }
 ];

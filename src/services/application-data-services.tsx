@@ -4,6 +4,18 @@ import { fetchApplications } from './application-services';
 // Type: type
 import { JobApplication } from "../types/applicationInfo";
 
+//Datapoints to capture here:
+// 1. Names of companies I've applied to
+// 2. Locations of companies I've applied to
+// 3. Sizes of companies I've applied to
+// 4. Companies that have responded to my applications
+// 5. Companies that have rejected my applications
+// 6. Companies that have given me an interview
+// 7. Companies that have given me an offer
+// 8. Companies that have ghosted me
+// 9. Companies that have given me feedback
+// 10. Companies that have not given me feedback
+
 export const getMostRecentApplications = async (): Promise<JobApplication[]> => {
       
   return new Promise<JobApplication[]>((resolve, reject) => {
