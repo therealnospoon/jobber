@@ -8,7 +8,6 @@ interface ApplicationModalProps {
   existingApplication?: JobApplication | null;
   onClose: () => void;
   onConfirm: (application: JobApplication) => void;
-//   onConfirm: (_id: string, company: string, position: string, dateApplied: string, status: JobStatus, notes: string, url: string) => void;
 }
 
 const jobStatuses = [
@@ -20,6 +19,24 @@ const jobStatuses = [
     "Final Round"
 ];
 
+const applicationResponseTypes = [
+    "Accepted",
+    "Rejected",
+    "No Response",
+    "Ghosted",
+    "Feedback Given",
+    "No Feedback"
+];
+
+const rejectionReasons = [
+    "Lack of Experience",
+    "Lack of Skills",
+    "Generic Rejection",
+    "No Response",
+    "Other",
+    "N/A"
+];
+
 const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, onConfirm, existingApplication }) => {
     const currentDate = new Date().toLocaleDateString("en-CA");
     const [_id, setId] = useState("");
@@ -29,6 +46,14 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, on
     const [dateApplied, setDateApplied] = useState(currentDate);
     const [notes, setNotes] = useState("");
     const [url, setUrl] = useState("");
+    const [response, setResponse] = useState(false);
+    const [responseType, setResponseType] = useState("No Response");
+    const [rejected, setRejected] = useState(false);
+    const [rejectedReason, setRejectedReason] = useState("N/A");
+    const [responseDate, setResponseDate] = useState(currentDate);
+    const [companySize, setCompanySize] = useState("");
+    const [jobLocation, setJobLocation] = useState("");
+
 
     useEffect(() => {
         if (existingApplication) {
@@ -39,6 +64,8 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, on
             setDateApplied(existingApplication.dateApplied.split('T')[0]);
             setNotes(existingApplication.notes);
             setUrl(existingApplication.url);
+            setCompanySize(existingApplication.companySize);
+            setJobLocation(existingApplication.jobLocation);
         }
 
         console.log("existingApplication", existingApplication);
@@ -65,6 +92,27 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, on
             case 'status':
                 setStatus(value);
                 break;
+            case 'companySize':
+                setCompanySize(value);
+                break;
+            case 'jobLocation':
+                setJobLocation(value);
+                break;
+            case 'rejected':
+                setRejected((e.target as HTMLInputElement).checked);
+                break;
+            case 'response':
+                setResponse((e.target as HTMLInputElement).checked);
+                break;
+            case 'responseType':
+                setResponseType(value);
+                break;
+            case 'rejectedReason':
+                setRejectedReason(value);
+                break;
+            case 'responseDate':
+                setResponseDate(value);
+                break;
             default:
                 break;
         }
@@ -78,6 +126,8 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, on
         setDateApplied((new Date()).toISOString());
         setNotes("");
         setUrl("");
+        setCompanySize("");
+        setJobLocation("");
     }
 
     return (
@@ -138,6 +188,28 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, on
                             />
                         </div>
                         <div>
+                            <label className=" dark:text-gray-200" htmlFor="jobLocation">Job Location</label>
+                            <input 
+                                id="jobLocation"
+                                value={jobLocation}
+                                onChange={handleInputChange} 
+                                type="text"
+                                name="jobLocation" 
+                                className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring" 
+                            />
+                        </div>
+                        <div>
+                            <label className=" dark:text-gray-200" htmlFor="companySize">Company Size</label>
+                            <input 
+                                id="companySize"
+                                value={companySize}
+                                onChange={handleInputChange} 
+                                type="text"
+                                name="companySize" 
+                                className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring" 
+                            />
+                        </div>
+                        <div>
                             <label className=" dark:text-gray-200" htmlFor="Notes">Notes</label>
                             <textarea 
                                 value={notes}
@@ -147,7 +219,6 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, on
                                 typeof="textarea" 
                                 className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
                             >
-
                             </textarea>
                         </div>
                         // TODO: Add resume upload functionality
@@ -184,6 +255,75 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, on
                                 className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring" 
                             />
                         </div>
+                        <div>
+                            <label className=" dark:text-gray-200" htmlFor="response">Response</label>
+                            <input 
+                                id="response"
+                                type="checkbox" 
+                                name="response" 
+                                checked={response}
+                                onChange={handleInputChange} 
+                                className="mt-2" 
+                            />
+                            <label className="ml-2 text-gray-700 dark:text-gray-300" htmlFor="response">Has the company responded?</label>
+                        </div>
+                            {response && (
+                                    <>
+                                    <div>
+                                        <label className=" dark:text-gray-200" htmlFor="responseDate">Response Date</label>
+                                        <input
+                                            id="responseDate"
+                                            value={responseDate}
+                                            onChange={handleInputChange}
+                                            type="date"
+                                            name="responseDate"
+                                            className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring" />
+                                    </div>
+                                    <div>
+                                        <label className=" dark:text-gray-200" htmlFor="responseType">Response Type</label>
+                                        <select
+                                            className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
+                                            value={responseType}
+                                            onChange={handleInputChange}
+                                            name="responseType"
+                                        >
+                                            {applicationResponseTypes.map((type, idx) => {
+                                                return <option key={idx}>{type}</option>;
+                                            })}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className=" dark:text-gray-200" htmlFor="rejected">Rejected</label>
+                                        <input
+                                            id="rejected"
+                                            type="checkbox"
+                                            name="rejected"
+                                            checked={rejected}
+                                            onChange={handleInputChange}
+                                            className="mt-2" />
+                                        <label className="ml-2 text-gray-700 dark:text-gray-300" htmlFor="rejected">Has the company rejected?</label>
+                                    </div>
+                                        {rejected && (
+                                            <>
+                                                <div>
+                                                    <label className=" dark:text-gray-200" htmlFor="rejectedReason">Rejected Reason</label>
+                                                    <select
+                                                        className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
+                                                        value={rejectedReason}
+                                                        onChange={handleInputChange}
+                                                        name="rejectedReason"
+                                                    >
+                                                        {rejectionReasons.map((reason, idx) => {
+                                                            return <option key={idx}>{reason}</option>;
+                                                        })}
+                                                    </select>
+                                                </div>
+                                            </>
+                                        )}
+                                    </>
+                            )}
+                        
+                        
                     </div>
 
                     <div className="flex justify-end mt-6">
@@ -196,7 +336,15 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, on
                                     dateApplied: dateApplied,
                                     status: status as 'Applied' | 'Interview' | 'Offer' | 'Rejected' | 'Phone Screen' | 'Final Round',
                                     notes: notes,
-                                    url: url}); 
+                                    url: url,
+                                    jobLocation: jobLocation,                                    
+                                    companySize: companySize,
+                                    response: response,
+                                    responseDate: response ? responseDate : undefined,
+                                    responseType: response ? responseType as 'Accepted' | 'Rejected' | 'No Response' | 'Ghosted' | 'Feedback Given' | 'No Feedback' : undefined,
+                                    rejected: rejected,
+                                    rejectedReason: rejected ? rejectedReason as 'Lack of Experience' | 'Lack of Skills' | 'Generic Rejection' | 'No Response' | 'Other' | 'N/A' : undefined,
+                                }); 
                                 onClose();
                                 resetModalData();}}
                         >

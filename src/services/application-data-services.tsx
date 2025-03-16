@@ -15,6 +15,23 @@ import { JobApplication } from "../types/applicationInfo";
 // 8. Companies that have ghosted me
 // 9. Companies that have given me feedback
 // 10. Companies that have not given me feedback
+// 11. Speed of responses from companies (in days)
+// 12. Average time taken to get an interview after applying (in days)
+// 13. Average time taken to get an offer after applying (in days)
+// 14. Average time taken to get rejected after applying (in days)
+// 15. Most type of rejections (e.g. no response, generic rejection, etc.)
+// 16. Most common rejection reasons (e.g. lack of experience, skills, etc.)
+// 17. Most common interview feedback (e.g. good communication, lack of skills, etc.)
+
+//Stat Cards:
+// 1. Total jobs applied to
+// 2. Application rate (per day)
+// 3. Rejection rate (per 5 application)
+// 4. Interview rate (per 5 application)
+// 5. Application to Offer rate (per application)
+// 6. Ghosted rate (per application)
+
+
 
 export const getMostRecentApplications = async (): Promise<JobApplication[]> => {
       

@@ -37,13 +37,16 @@ const Applications: React.FC = () => {
   
     const handleAddNewJobEntry = useCallback((application:JobApplication) => {
       const newApplication: JobApplication = {
-          company: application.company,
-          position: application.position,
-          dateApplied: application.dateApplied,
-          status: application.status,
-          notes: application.notes,
-          url: application.url
-       };
+        company: application.company,
+        position: application.position,
+        dateApplied: application.dateApplied,
+        status: application.status,
+        notes: application.notes,
+        url: application.url,
+        jobLocation: '',
+        companySize: '',
+        response: false
+      };
 
        try {
           addNewApplication(newApplication).then((newlyAddedApp) => {
@@ -58,17 +61,20 @@ const Applications: React.FC = () => {
     }, [jobApplications]);
 
     const handleUpdateApplication = useCallback((application:JobApplication) => {
-      const applicationToUpdate: JobApplication = { 
+      const applicationToUpdate: JobApplication = {
         _id: application._id,
         company: application.company,
         position: application.position,
         dateApplied: application.dateApplied,
         status: application.status,
         notes: application.notes,
-        url: application.url
-       };
+        url: application.url,
+        jobLocation: '',
+        companySize: '',
+        response: false
+      };
 
-       try {
+      try {
           updateApplication(applicationToUpdate);
 
           const updatedJobApplications = [...jobApplications];
@@ -78,9 +84,9 @@ const Applications: React.FC = () => {
 
           setJobApplications(updatedJobApplications);
           console.log('Job application updated:', applicationToUpdate);
-        } catch (error) {
+      } catch (error) {
           console.error('Failed to add new application:', error);
-       }       
+      }       
          
     }, [jobApplications]);
 
