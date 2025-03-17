@@ -15,7 +15,7 @@ import { fetchApplications, addNewApplication, updateApplication, deleteApplicat
 import { Link } from 'react-router-dom';
 
 //Icons
-import { Trash, Edit } from 'lucide-react'
+import { Trash, Edit, Link2 } from 'lucide-react'
 
 let dbApplications: JobApplication[] = [];
 
@@ -43,9 +43,13 @@ const Applications: React.FC = () => {
         status: application.status,
         notes: application.notes,
         url: application.url,
-        jobLocation: '',
-        companySize: '',
-        response: false
+        jobLocation: application.jobLocation,
+        companySize: application.companySize,
+        response: application.response,
+        responseType: application.responseType,
+        responseDate: application.responseDate,
+        rejected: application.rejected,
+        rejectedReason: application.rejectedReason
       };
 
        try {
@@ -69,21 +73,26 @@ const Applications: React.FC = () => {
         status: application.status,
         notes: application.notes,
         url: application.url,
-        jobLocation: '',
-        companySize: '',
-        response: false
+        jobLocation: application.jobLocation,
+        companySize: application.companySize,
+        response: application.response,
+        responseType: application.responseType,
+        responseDate: application.responseDate,
+        rejected: application.rejected,
+        rejectedReason: application.rejectedReason
       };
 
       try {
-          updateApplication(applicationToUpdate);
+          updateApplication(applicationToUpdate).then((updatedApp) => {
+            const updatedJobApplications = [...jobApplications];
 
-          const updatedJobApplications = [...jobApplications];
+            const updatedAppIndex = jobApplications.findIndex(app => app._id === applicationToUpdate._id);
+            updatedJobApplications[updatedAppIndex] = updatedApp;
 
-          const updatedAppIndex = jobApplications.findIndex(app => app._id === applicationToUpdate._id);
-          updatedJobApplications[updatedAppIndex] = applicationToUpdate;
-
-          setJobApplications(updatedJobApplications);
-          console.log('Job application updated:', applicationToUpdate);
+            setJobApplications(updatedJobApplications);
+            console.log('Job application updated:', applicationToUpdate);
+          }
+        );
       } catch (error) {
           console.error('Failed to add new application:', error);
       }       
@@ -176,7 +185,7 @@ const Applications: React.FC = () => {
                       <th className="px-6 py-3">Position</th>
                       <th className="px-6 py-3">Date Applied</th>
                       <th className="px-6 py-3">Status</th>
-                      <th className="px-6 py-3">Url</th>
+                      <th className="px-6 py-3">Job Posting</th>
                       <th className="px-6 py-3">Notes</th>
                       <th className="px-6 py-3">Actions</th>
                     </tr>
@@ -198,10 +207,19 @@ const Applications: React.FC = () => {
                             {job.status}
                           </span>
                         </td>
-                        <td className="px-6 py-4 truncate max-w-52">
-                          <Link to={job.url} className="text-gray-700">
-                            {job.url}
-                          </Link>
+                        <td className="max-w-52">
+                            <Link to={job.url} className="text-gray-700">
+                              <motion.div
+                                    className='flex items-center p-4 text-sm font-medium rounded-lg hover:bg-zinc-200 transition-colors'
+                              >
+                                <Link2 size={20} style={{ color: 'blue', minWidth: "20px"}} />
+                                  <span
+                                        className="ml-4 whitespace-nowrap"
+                                    >
+                                      Visit Post
+                                  </span>
+                              </motion.div>
+                            </Link>
                         </td>
                         <td className="px-6 py-4 whitespace-pre-wrap md:whitespace-nowrap">
                           <span className="text-gray-700">
