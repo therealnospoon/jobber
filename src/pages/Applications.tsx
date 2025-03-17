@@ -216,7 +216,7 @@ const Applications: React.FC = () => {
                                   <span
                                         className="ml-4 whitespace-nowrap"
                                     >
-                                      Visit Post
+                                      URL link
                                   </span>
                               </motion.div>
                             </Link>
