@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
-import { Menu, BarChart2, ShoppingBag, Users, DollarSign, ShoppingCart } from 'lucide-react'
+import { Menu, BarChart2, TableProperties, Wrench, Settings, CircleGauge } from 'lucide-react'
 import { Link } from 'react-router-dom';
 
 const SIDEBAR_ITEMS =  [
 	{
 		name: "Dashboard",
-		icon: BarChart2,
+		icon: CircleGauge,
 		color: "#6366f1",
 		href: "/",
 	},
-	{ name: "Applications", icon: ShoppingBag, color: "#8B5CF6", href: "/applications" },
-	{ name: "Resume Workshop", icon: Users, color: "#EC4899", href: "/resumeworkshop" },
-	{ name: "Calendar", icon: DollarSign, color: "#10B981", href: "/calendar" },
-	{ name: "Reports", icon: ShoppingCart, color: "#F59E0B", href: "/reports" }
+	{ name: "Applications", icon: TableProperties, color: "#8B5CF6", href: "/applications" },
+	{ name: "Resume Workshop", icon: Wrench, color: "#EC4899", href: "/resumeworkshop" },
+	{ name: "Statistics", icon: BarChart2, color: "#10B981", href: "/statistics" },
+	{ name: "Settings", icon: Settings, color: "#F59E0B", href: "/settings" }
 ];
 
 const Sidebar: React.FC = () => {

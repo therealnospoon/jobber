@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar'
 import Dashboard from './pages/Dashboard'
 import Applications from './pages/Applications'
 import ResumeWorkshop from './pages/ResumeWorkshop'
+import Statistics from './pages/Statistics'
 
 function App() {
   return (
@@ -19,6 +20,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/applications" element={<Applications />} />
+        <Route path="/resumeworkshop" element={<ResumeWorkshop />} />
+        <Route path="/statistics" element={<Statistics />} />
         <Route path="/resumeworkshop" element={<ResumeWorkshop />} />
       </Routes>
     </div>

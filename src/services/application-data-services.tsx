@@ -23,14 +23,20 @@ import { JobApplication } from "../types/applicationInfo";
 // 16. Most common rejection reasons (e.g. lack of experience, skills, etc.)
 // 17. Most common interview feedback (e.g. good communication, lack of skills, etc.)
 
-//Stat Cards:
+//Stat Cards for dashboard:
+// 1. How many applications I've submitted today
+// 2. Goal for applications to submit today
+// 3. How many applications I've submitted this week
+// 4. Goal for applications to submit this week
+// 5. Application rate (per day)
+
+//Stat Cards for statistics page:
 // 1. Total jobs applied to
 // 2. Application rate (per day)
 // 3. Rejection rate (per 5 application)
 // 4. Interview rate (per 5 application)
 // 5. Application to Offer rate (per application)
 // 6. Ghosted rate (per application)
-
 
 
 export const getMostRecentApplications = async (): Promise<JobApplication[]> => {
@@ -54,5 +60,22 @@ export const getMostRecentApplications = async (): Promise<JobApplication[]> => 
         reject(error.message);
       });
   }) 
+}
+
+export const getNumberOfApplicationsToday = async (): Promise<number> => {
+  return new Promise<number>((resolve, reject) => {
+    fetchApplications()
+      .then((applications: JobApplication[]) => {
+        const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+        const applicationsToday = applications.filter((application) => 
+          application.createdOn && new Date(application.createdOn).toISOString().split('T')[0] === today
+        );
+        resolve(applicationsToday.length);
+      })
+      .catch((error) => {
+        console.error("Error fetching applications: ", error);
+        reject(error.message);
+      });
+  });
 }
     
