@@ -16,6 +16,7 @@ import { Link } from 'react-router-dom';
 
 //Icons
 import { Trash, Edit, Link2 } from 'lucide-react'
+import { getNumberOfApplicationsToday } from '../services/application-data-services';
 
 let dbApplications: JobApplication[] = [];
 
@@ -53,8 +54,13 @@ const Applications: React.FC = () => {
       };
 
        try {
-          addNewApplication(newApplication).then((newlyAddedApp) => {
-            setJobApplications([...jobApplications, newlyAddedApp]);
+          addNewApplication(newApplication).then(() => {
+            // setJobApplications([...jobApplications, newApplication]);
+            fetchApplications().then((applications: JobApplication[]) => {
+              dbApplications = [...applications];
+              setJobApplications([...applications]);
+            });
+
             console.log('New job added:', newApplication);
           });
         } catch (error) {
@@ -62,7 +68,7 @@ const Applications: React.FC = () => {
        }
   
           
-    }, [jobApplications]);
+    });
 
     const handleUpdateApplication = useCallback((application:JobApplication) => {
       const applicationToUpdate: JobApplication = {

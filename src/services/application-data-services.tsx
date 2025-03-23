@@ -38,6 +38,7 @@ import { JobApplication } from "../types/applicationInfo";
 // 5. Application to Offer rate (per application)
 // 6. Ghosted rate (per application)
 
+const allApplications = await fetchApplications();
 
 export const getMostRecentApplications = async (): Promise<JobApplication[]> => {
       
@@ -48,34 +49,52 @@ export const getMostRecentApplications = async (): Promise<JobApplication[]> => 
     // If successful, resolve the promise with the most recent applications
     // Note: This is a simple implementation. In a real-world scenario, you might want to handle errors more gracefully.
     // For example, you could log the error and return an empty array or a default value.
-    fetchApplications()
-      .then((applications: JobApplication[]) => {
-        const mostRecentApplications = applications
-          .sort((a, b) => new Date(String(b.createdOn)).getTime() - new Date(String(a.createdOn)).getTime())
-          .slice(0, 5);
-        resolve(mostRecentApplications);
-      })
-      .catch((error) => {
-        console.error("Error fetching applications: ", error);
-        reject(error.message);
-      });
+    try {
+      const mostRecentApplications = allApplications.sort((a:JobApplication, b:JobApplication) => new Date(String(b.createdOn))
+      .getTime() - new Date(String(a.createdOn)).getTime())
+      .slice(0, 5);
+      resolve(mostRecentApplications);
+    } catch (error) {
+      console.error("Error fetching applications: ", error);
+      reject(error);
+    }  
   }) 
 }
+// export const getMostRecentApplications = async (): Promise<JobApplication[]> => {
+      
+//   return new Promise<JobApplication[]>((resolve, reject) => {
+//     // Fetch all applications and sort them by created date in descending order
+//     // Then slice the first 5 to get the most recent applications
+//     // If there is an error, reject the promise with the error message
+//     // If successful, resolve the promise with the most recent applications
+//     // Note: This is a simple implementation. In a real-world scenario, you might want to handle errors more gracefully.
+//     // For example, you could log the error and return an empty array or a default value.
+//     fetchApplications()
+//       .then((applications: JobApplication[]) => {
+//         const mostRecentApplications = applications
+//           .sort((a, b) => new Date(String(b.createdOn)).getTime() - new Date(String(a.createdOn)).getTime())
+//           .slice(0, 5);
+//         resolve(mostRecentApplications);
+//       })
+//       .catch((error) => {
+//         console.error("Error fetching applications: ", error);
+//         reject(error.message);
+//       });
+//   }) 
+// }
 
 export const getNumberOfApplicationsToday = async (): Promise<number> => {
   return new Promise<number>((resolve, reject) => {
-    fetchApplications()
-      .then((applications: JobApplication[]) => {
-        const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
-        const applicationsToday = applications.filter((application) => 
-          application.createdOn && new Date(application.createdOn).toISOString().split('T')[0] === today
-        );
-        resolve(applicationsToday.length);
-      })
-      .catch((error) => {
-        console.error("Error fetching applications: ", error);
-        reject(error.message);
-      });
+    // Fetch all applications and filter them by today's date
+    try {
+      const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+      const applicationsToday = allApplications.filter((application: JobApplication) => 
+        application.createdOn && new Date(application.createdOn).toISOString().split('T')[0] === today
+      );
+      resolve(applicationsToday.length);
+    } catch (error) {
+      console.error("Error fetching applications: ", error);
+      reject(error);
+    };
   });
-}
-    
+};

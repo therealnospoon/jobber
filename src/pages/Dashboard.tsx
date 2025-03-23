@@ -1,10 +1,18 @@
+//Packages
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Zap, Users, ShoppingBag, BarChart2 } from 'lucide-react'
 
+//Types
 import { JobApplication } from '../types/applicationInfo';
-import { getMostRecentApplications } from '../services/application-data-services';
 
+//Services
+import { 
+  getMostRecentApplications,
+  getNumberOfApplicationsToday
+ } from '../services/application-data-services';
+
+//Components
 import Header from '../components/common/Header'
 import StatCard from '../components/common/StatCard';
 import SalesOverviewChart from '../components/dashboard/SalesOverviewChart'
@@ -30,12 +38,19 @@ const Dashboard: React.FC = () => {
     new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening');
     const [jobApplications, setJobApplications] = useState<JobApplication[]>([]);
     const [activeTab, setActiveTab] = useState<string>('All');
+    const [applicationsToday, setApplicationsToday] = useState<number>(0);
     
   const greetingsMessage = `Good ${timeOfDay}, Tim. Let's get to work!`.split("");
 
   useEffect(() => {
     getMostRecentApplications().then((mostRecentApplications: JobApplication[]) => {
       setJobApplications(mostRecentApplications);
+    }).catch((error) => {
+      console.error("Error fetching applications: ", error);
+    });
+
+    getNumberOfApplicationsToday().then((applicationsToday: number) => {
+      setApplicationsToday(applicationsToday);
     }
     ).catch((error) => {
       console.error("Error fetching applications: ", error);
@@ -43,7 +58,7 @@ const Dashboard: React.FC = () => {
     );
   }, []);
   
-  const tabs = ['All', 'Applied', 'Interview', 'Offer', 'Rejected'];
+  const tabs = ['All', 'Follow-up', 'Stale'];
   
   const filteredApplications = activeTab === 'All' 
     ? jobApplications 
@@ -84,7 +99,6 @@ const Dashboard: React.FC = () => {
               >
                 {
                   char === ' ' ? <span className='inline-block w-2' /> : null // Add space for better readability
-
                 }
                 {char}
               </motion.span>
@@ -98,7 +112,7 @@ const Dashboard: React.FC = () => {
               transition={{ duration: 1 }}
           >
               {/* These should gradually change colors depending on how good the rate is */}
-              <StatCard name='Applications submitted today' icon={Zap} value={jobApplications.length} color='#6366F1' />
+              <StatCard name='Applications submitted today' icon={Zap} value={applicationsToday} color='#6366F1' />
               <StatCard name='Daily goal' icon={Users} value={jobApplications.filter(app => app.status == "Interview").length} color='#8B5CF6' />
               <StatCard name='Weekly goal' icon={ShoppingBag} value={jobApplications.filter(app => app.status == "Rejected").length} color='#EC4899' />
               <StatCard name='Your productivity rate' icon={BarChart2} value={jobApplications.filter(app => app.status == "Offer").length} color='#10B981' />
@@ -106,10 +120,10 @@ const Dashboard: React.FC = () => {
 
           {/* CHARTS GO HERE */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <SalesChannelChart />
-              <div className="card bg-zinc-50 shadow-lg rounded-xl p-6 lg:col-span-2 overflow-hidden">
+              {/* Pinned Applications */}
+              <div className="card bg-zinc-50 shadow-lg rounded-xl p-6 overflow-hidden">
                 <div className="card-header bg-zinc-50 flex justify-between items-center p-6 border-b border-gray-100">
-                  <div className="card-title bg-zinc-50 text-xl font-semibold text-gray-800">Recent Applications</div>
+                  <div className="card-title bg-zinc-50 text-xl font-semibold text-gray-800">Pinned Applications</div>
                   <a href="/applications" className="btn btn-secondary px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors">
                     View All
                   </a>
@@ -170,6 +184,84 @@ const Dashboard: React.FC = () => {
                   </table>
                 </div>
               </div>
+              {/* To do list */}
+              <div className="card bg-zinc-50 shadow-lg rounded-xl p-6 overflow-hidden">
+                <div className="card-header bg-zinc-50 flex justify-between items-center p-6 border-b border-gray-100">
+                  <div className="card-title bg-zinc-50 text-xl font-semibold text-gray-800">To Do List</div>
+                  <a href="/applications" className="btn btn-secondary px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors">
+                    View All
+                  </a>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="job-list w-full">
+                    <thead>
+                      <tr className="bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3">Task</th>
+                        <th className="px-6 py-3">Due Date</th>
+                        <th className="px-6 py-3">Status</th>
+                        <th className="px-6 py-3">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      <tr className="hover:bg-gray-50 transition-colors">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="font-medium text-gray-900">Update resume</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-gray-700">Today</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className="status status-applied px-3 py-1 inline-flex text-xs font-medium rounded-full bg-blue-100 text-blue-800">
+                            In Progress
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <button className="btn px-3 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-md text-sm transition-colors">
+                            Details
+                          </button>
+                        </td>
+                      </tr>
+                      <tr className="hover:bg-gray-50 transition-colors">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="font-medium text-gray-900">Apply to 5 jobs</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-gray-700">Tomorrow</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className="status status-interview px-3 py-1 inline-flex text-xs font-medium rounded-full bg-purple-100 text-purple-800">
+                            Not Started
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <button className="btn px-3 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-md text-sm transition-colors">
+                            Details
+                          </button>
+                        </td>
+                      </tr>
+                      <tr className="hover:bg-gray-50 transition-colors">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="font-medium text-gray-900">Prepare for interview</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-gray-700">Next Week</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className="status status-offer px-3 py-1 inline-flex text-xs font-medium rounded-full bg-green-100 text-green-800">
+                            Completed
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <button className="btn px-3 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-md text-sm transition-colors">
+                            Details
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <SalesChannelChart />
           </div>
 
         </main>
