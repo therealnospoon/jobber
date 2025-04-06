@@ -1,6 +1,9 @@
 //Packages
-import React, { useState, useCallback, useEffect } from 'react'
+import React, { useState, useCallback } from 'react'
 import { motion } from 'framer-motion';
+
+//Contexts
+import { useApplicationContext } from '../contexts/application-context';
 
 //Components
 import Header from '../components/common/Header'
@@ -16,27 +19,27 @@ import { Link } from 'react-router-dom';
 
 //Icons
 import { Trash, Edit, Link2 } from 'lucide-react'
-import { getNumberOfApplicationsToday } from '../services/application-data-services';
 
-let dbApplications: JobApplication[] = [];
+// let dbApplications: JobApplication[] = [];
 
 const Applications: React.FC = () => {
-    const [jobApplications, setJobApplications] = useState<JobApplication[]>(dbApplications);
+    // const [jobApplications, setJobApplications] = useState<JobApplication[]>(dbApplications);
+    const { applications, setApplications } = useApplicationContext();
     const [activeTab, setActiveTab] = useState<string>('All');
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState<boolean>(false);
     const [selectedApplication, setSelectedApplication] = useState<JobApplication|null>(null);
     
-    useEffect(() => {
-      fetchApplications()
-        .then((applications: JobApplication[]) => {
-          dbApplications = [...applications];
-          setJobApplications([...applications]);
-        });
-    }, []);
+    // useEffect(() => {
+    //   fetchApplications()
+    //     .then((applications: JobApplication[]) => {
+    //       setApplications([...applications]);
+    //     });
+    // }, [applications, setApplications]);
 
   
     const handleAddNewJobEntry = useCallback((application:JobApplication) => {
+      console.log("Running handle Add New Job Entry")
       const newApplication: JobApplication = {
         company: application.company,
         position: application.position,
@@ -57,8 +60,8 @@ const Applications: React.FC = () => {
           addNewApplication(newApplication).then(() => {
             // setJobApplications([...jobApplications, newApplication]);
             fetchApplications().then((applications: JobApplication[]) => {
-              dbApplications = [...applications];
-              setJobApplications([...applications]);
+              // dbApplications = [...applications];
+              setApplications([...applications]);
             });
 
             console.log('New job added:', newApplication);
@@ -68,9 +71,10 @@ const Applications: React.FC = () => {
        }
   
           
-    });
+    }, [setApplications]);
 
     const handleUpdateApplication = useCallback((application:JobApplication) => {
+      console.log("Running handleUpdateApplication")
       const applicationToUpdate: JobApplication = {
         _id: application._id,
         company: application.company,
@@ -90,12 +94,12 @@ const Applications: React.FC = () => {
 
       try {
           updateApplication(applicationToUpdate).then((updatedApp) => {
-            const updatedJobApplications = [...jobApplications];
+            const updatedJobApplications = [...applications];
 
-            const updatedAppIndex = jobApplications.findIndex(app => app._id === applicationToUpdate._id);
+            const updatedAppIndex = applications.findIndex(app => app._id === applicationToUpdate._id);
             updatedJobApplications[updatedAppIndex] = updatedApp;
 
-            setJobApplications(updatedJobApplications);
+            setApplications(updatedJobApplications);
             console.log('Job application updated:', applicationToUpdate);
           }
         );
@@ -103,12 +107,12 @@ const Applications: React.FC = () => {
           console.error('Failed to add new application:', error);
       }       
          
-    }, [jobApplications]);
+    }, [applications, setApplications]);
 
     const handleDeleteApplication = (applicationID: string | undefined) => {
         try {
           deleteApplication(applicationID);
-          setJobApplications(jobApplications.filter(application => application._id !== applicationID));
+          setApplications(applications.filter(application => application._id !== applicationID));
           console.log(`Job application with ID: ${applicationID} deleted`);
         } catch (error) {
           console.error('Failed to add new application:', error);
@@ -123,8 +127,8 @@ const Applications: React.FC = () => {
     const tabs = ['All', 'Applied', 'Interview', 'Offer', 'Rejected'];
     
     const filteredApplications = activeTab === 'All' 
-      ? jobApplications 
-      : jobApplications.filter(job => job.status === activeTab);
+      ? applications 
+      : applications.filter(job => job.status === activeTab);
     
     const getStatusClasses = (status: string) => {
       switch(status) {

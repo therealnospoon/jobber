@@ -1,12 +1,23 @@
 import { Routes, Route } from 'react-router-dom'
+import { useEffect } from 'react';
+
+import { useApplicationContext } from './contexts/application-context';
+
+import { fetchApplications } from './services/application-services';
 
 import Sidebar from './components/Sidebar'
 import Dashboard from './pages/Dashboard'
 import Applications from './pages/Applications'
 import ResumeWorkshop from './pages/ResumeWorkshop'
 import Statistics from './pages/Statistics'
+import { JobApplication } from './types/applicationInfo'
+// import ApplicationContextProvider from './contexts/providers/application-context-provider';
+
+
 
 function App() {
+
+
   return (
     <div className="flex h-screen bg-zinc-100 text-zinc-700 overflow-hidden">
 
@@ -17,13 +28,14 @@ function App() {
       </div>
 
       <Sidebar />
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/applications" element={<Applications />} />
-        <Route path="/resumeworkshop" element={<ResumeWorkshop />} />
-        <Route path="/statistics" element={<Statistics />} />
-        <Route path="/resumeworkshop" element={<ResumeWorkshop />} />
-      </Routes>
+        
+          <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/applications" element={<Applications />} />
+              <Route path="/resumeworkshop" element={<ResumeWorkshop />} />
+              <Route path="/statistics" element={<Statistics />} />
+          </Routes>
+       
     </div>
   )
 }

@@ -15,9 +15,12 @@ import {
 //Components
 import Header from '../components/common/Header'
 import StatCard from '../components/common/StatCard';
-import SalesOverviewChart from '../components/dashboard/SalesOverviewChart'
-import CompanyDistributionChart from '../components/dashboard/CompanyDistributionChart'
+// import SalesOverviewChart from '../components/dashboard/SalesOverviewChart'
+// import CompanyDistributionChart from '../components/dashboard/CompanyDistributionChart'
 import SalesChannelChart from '../components/dashboard/SalesChannelChart';
+
+//Contexts
+import { useApplicationContext } from '../contexts/application-context';
 
 //Stat Cards for dashboard:
 // 1. How many applications I've submitted today
@@ -34,35 +37,38 @@ import SalesChannelChart from '../components/dashboard/SalesChannelChart';
 // 5. Table of stale applications (applications that haven't been updated in a while)
 
 const Dashboard: React.FC = () => {
+  const {applications} = useApplicationContext();
+  const [recentApps, setRecentApps] = useState<JobApplication[]>([]);
   const [timeOfDay] = useState<string>(
     new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening');
-    const [jobApplications, setJobApplications] = useState<JobApplication[]>([]);
-    const [activeTab, setActiveTab] = useState<string>('All');
-    const [applicationsToday, setApplicationsToday] = useState<number>(0);
-    
+  const [activeTab, setActiveTab] = useState<string>('All');
+  const [applicationsToday, setApplicationsToday] = useState<number>(0);
   const greetingsMessage = `Good ${timeOfDay}, Tim. Let's get to work!`.split("");
+  
 
   useEffect(() => {
-    getMostRecentApplications().then((mostRecentApplications: JobApplication[]) => {
-      setJobApplications(mostRecentApplications);
-    }).catch((error) => {
-      console.error("Error fetching applications: ", error);
-    });
-
-    getNumberOfApplicationsToday().then((applicationsToday: number) => {
-      setApplicationsToday(applicationsToday);
+    getMostRecentApplications(applications).then((apps: JobApplication[]) => {
+      setRecentApps(apps);
     }
-    ).catch((error) => {
+    ).catch((error: string) => {
       console.error("Error fetching applications: ", error);
     }
     );
-  }, []);
+
+    getNumberOfApplicationsToday(applications).then((appsToday: number) => {
+      setApplicationsToday(appsToday);
+    }
+    ).catch((error: string) => {
+      console.error("Error fetching applications: ", error);
+    }
+    );
+  }, [applications]);
   
   const tabs = ['All', 'Follow-up', 'Stale'];
   
   const filteredApplications = activeTab === 'All' 
-    ? jobApplications 
-    : jobApplications.filter(job => job.status === activeTab);
+    ? recentApps 
+    : recentApps.filter(job => job.status === activeTab);
   
   const getStatusClasses = (status: string) => {
     switch(status) {
@@ -113,9 +119,9 @@ const Dashboard: React.FC = () => {
           >
               {/* These should gradually change colors depending on how good the rate is */}
               <StatCard name='Applications submitted today' icon={Zap} value={applicationsToday} color='#6366F1' />
-              <StatCard name='Daily goal' icon={Users} value={jobApplications.filter(app => app.status == "Interview").length} color='#8B5CF6' />
-              <StatCard name='Weekly goal' icon={ShoppingBag} value={jobApplications.filter(app => app.status == "Rejected").length} color='#EC4899' />
-              <StatCard name='Your productivity rate' icon={BarChart2} value={jobApplications.filter(app => app.status == "Offer").length} color='#10B981' />
+              <StatCard name='Daily goal' icon={Users} value={applications.filter(app => app.status == "Interview").length} color='#8B5CF6' />
+              <StatCard name='Weekly goal' icon={ShoppingBag} value={applications.filter(app => app.status == "Rejected").length} color='#EC4899' />
+              <StatCard name='Your productivity rate' icon={BarChart2} value={applications.filter(app => app.status == "Offer").length} color='#10B981' />
           </motion.div>
 
           {/* CHARTS GO HERE */}

@@ -38,9 +38,9 @@ import { JobApplication } from "../types/applicationInfo";
 // 5. Application to Offer rate (per application)
 // 6. Ghosted rate (per application)
 
-const allApplications = await fetchApplications();
+// const allApplications = await fetchApplications();
 
-export const getMostRecentApplications = async (): Promise<JobApplication[]> => {
+export const getMostRecentApplications = async (applications: JobApplication[]): Promise<JobApplication[]> => {
       
   return new Promise<JobApplication[]>((resolve, reject) => {
     // Fetch all applications and sort them by created date in descending order
@@ -50,7 +50,7 @@ export const getMostRecentApplications = async (): Promise<JobApplication[]> => 
     // Note: This is a simple implementation. In a real-world scenario, you might want to handle errors more gracefully.
     // For example, you could log the error and return an empty array or a default value.
     try {
-      const mostRecentApplications = allApplications.sort((a:JobApplication, b:JobApplication) => new Date(String(b.createdOn))
+      const mostRecentApplications = applications.sort((a:JobApplication, b:JobApplication) => new Date(String(b.createdOn))
       .getTime() - new Date(String(a.createdOn)).getTime())
       .slice(0, 5);
       resolve(mostRecentApplications);
@@ -83,12 +83,12 @@ export const getMostRecentApplications = async (): Promise<JobApplication[]> => 
 //   }) 
 // }
 
-export const getNumberOfApplicationsToday = async (): Promise<number> => {
+export const getNumberOfApplicationsToday = async (applications: JobApplication[]): Promise<number> => {
   return new Promise<number>((resolve, reject) => {
     // Fetch all applications and filter them by today's date
     try {
       const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
-      const applicationsToday = allApplications.filter((application: JobApplication) => 
+      const applicationsToday = applications.filter((application: JobApplication) => 
         application.createdOn && new Date(application.createdOn).toISOString().split('T')[0] === today
       );
       resolve(applicationsToday.length);
