@@ -36,6 +36,8 @@ const Applications: React.FC = () => {
     useState<boolean>(false);
   const [selectedApplication, setSelectedApplication] =
     useState<JobApplication | null>(null);
+  const [applicationToDelete, setApplicationToDelete] =
+    useState<JobApplication | null>(null);
   const [sortConfig, setSortConfig] = useState({
     key: "createdOn", // Default sort by date applied
     direction: "desc", // Default sort by most recent applications
@@ -72,6 +74,10 @@ const Applications: React.FC = () => {
 
     setSortableApplications(sortableApplications);
   }, [sortConfig, applications]);
+
+  useEffect(() => {
+    console.log("selectedApplication changed:", selectedApplication);
+  }, [selectedApplication]);
 
   const requestSort = (key: string) => {
     let direction = "asc";
@@ -162,12 +168,13 @@ const Applications: React.FC = () => {
 
   const handleDeleteApplication = (applicationID: string | undefined) => {
     try {
-      deleteApplication(applicationID);
-      setApplications(
-        applications.filter((application) => application._id !== applicationID)
-      );
-      console.log(`Job application with ID: ${applicationID} deleted`);
-      setSelectedApplication(null);
+      deleteApplication(applicationID).then(() => {
+        console.log("Deleted application with ID:", applicationID);
+
+        fetchApplications().then((applications: JobApplication[]) => {
+          setApplications([...applications]);
+        });
+      });
     } catch (error) {
       console.error("Failed to add new application:", error);
     }
@@ -176,6 +183,11 @@ const Applications: React.FC = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedApplication(null);
+  };
+
+  const handleConfirmationModalClose = () => {
+    setApplicationToDelete(null);
+    setIsConfirmationModalOpen(false);
   };
 
   const tabs = ["All", "Applied", "Interview", "Offer", "Rejected"];
@@ -219,7 +231,10 @@ const Applications: React.FC = () => {
               {/* <div className="card-title text-xl font-semibold text-gray-800">All Applications</div> */}
               <button
                 className="btn btn-secondary px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-colors"
-                onClick={() => setIsModalOpen(true)}
+                onClick={() => {
+                  setSelectedApplication(null);
+                  setIsModalOpen(true);
+                }}
               >
                 Add New
               </button>
@@ -332,7 +347,7 @@ const Applications: React.FC = () => {
                         <button
                           className="btn px-3 py-1 hover:bg-zinc-100 rounded-md text-sm transition-colors"
                           onClick={() => {
-                            setSelectedApplication(job);
+                            setApplicationToDelete(job);
                             setIsConfirmationModalOpen(true);
                           }}
                         >
@@ -357,19 +372,21 @@ const Applications: React.FC = () => {
         onConfirm={
           selectedApplication ? handleUpdateApplication : handleAddNewJobEntry
         }
-        existingApplication={selectedApplication}
+        existingApplication={
+          selectedApplication !== null ? selectedApplication : null
+        }
       />
 
       <ConfirmationModal
         isOpen={isConfirmationModalOpen}
         onClose={() => {
-          setIsConfirmationModalOpen(false);
-          setSelectedApplication(null);
+          // setSelectedApplication(null);
+          handleConfirmationModalClose();
         }}
         onConfirm={() => {
-          handleDeleteApplication(selectedApplication!._id);
-          setIsConfirmationModalOpen(false);
-          setSelectedApplication(null);
+          if (applicationToDelete) {
+            handleDeleteApplication(applicationToDelete._id);
+          }
         }}
       />
     </div>
