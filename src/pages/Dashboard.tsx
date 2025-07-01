@@ -50,6 +50,49 @@ const Dashboard: React.FC = () => {
     ""
   );
 
+  const statCardData = [
+    {
+      name: "Applications submitted today",
+      icon: Zap,
+      value: applicationsToday,
+      color: "#6366F1",
+      showUrgency: true,
+      duration: 500,
+      delay: 750,
+      goal: 3, // Example goal for today
+    },
+    {
+      name: "Daily goal",
+      icon: Users,
+      value: applications.filter((app) => app.status === "Interview").length,
+      color: "#8B5CF6",
+      showUrgency: true,
+      duration: 700,
+      delay: 900,
+      goal: 5, // Example goal for interviews
+    },
+    {
+      name: "Weekly goal",
+      icon: ShoppingBag,
+      value: applications.filter((app) => app.status === "Rejected").length,
+      color: "#EC4899",
+      showUrgency: true,
+      duration: 900,
+      delay: 1050,
+      goal: 10, // Example weekly goal
+    },
+    {
+      name: "Your productivity rate",
+      icon: BarChart2,
+      value: applications.filter((app) => app.status === "Offer").length,
+      color: "#10B981",
+      showUrgency: true,
+      duration: 1100,
+      delay: 1200,
+      goal: 2, // Example goal for offers
+    },
+  ];
+
   useEffect(() => {
     getMostRecentApplications(applications)
       .then((appArray: JobApplication[]) => {
@@ -104,7 +147,7 @@ const Dashboard: React.FC = () => {
               animate={{ opacity: 1 }}
               transition={{
                 duration: 0.1,
-                delay: i / 15,
+                delay: i / 25,
               }}
               key={i}
             >
@@ -116,41 +159,21 @@ const Dashboard: React.FC = () => {
           ))}
         </div>
 
-        <motion.div
-          className="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1 }}
-        >
-          {/* These should gradually change colors depending on how good the rate is */}
-          <StatCard
-            name="Applications submitted today"
-            icon={Zap}
-            value={applicationsToday}
-            color="#6366F1"
-          />
-          <StatCard
-            name="Daily goal"
-            icon={Users}
-            value={
-              applications.filter((app) => app.status == "Interview").length
-            }
-            color="#8B5CF6"
-          />
-          <StatCard
-            name="Weekly goal"
-            icon={ShoppingBag}
-            value={
-              applications.filter((app) => app.status == "Rejected").length
-            }
-            color="#EC4899"
-          />
-          <StatCard
-            name="Your productivity rate"
-            icon={BarChart2}
-            value={applications.filter((app) => app.status == "Offer").length}
-            color="#10B981"
-          />
+        <motion.div className="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+          {statCardData.map((card, index) => (
+            <StatCard
+              key={index}
+              name={card.name}
+              icon={card.icon}
+              value={card.value}
+              color={card.color}
+              showUrgency={card.showUrgency}
+              duration={card.duration}
+              delay={card.delay}
+              goal={card.goal}
+              transitionDelay={index * 0.3} // Add a delay for each card
+            />
+          ))}
         </motion.div>
 
         {/* Pinned applications table*/}

@@ -131,7 +131,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
     setCompany("");
     setPosition("");
     setStatus("Applied");
-    setDateApplied(new Date().toISOString());
+    setDateApplied(new Date().toLocaleDateString("en-CA"));
     setNotes("");
     setUrl("");
     setCompanySize("");
